@@ -11,8 +11,8 @@ def generar_documentos_columnas(
     columnas=3, 
     grosorDeBorde=0.25, 
     colorDeGrosorDeBorde='#eeeeee', 
-    AltoDeLinea=5, 
-    EspacioEntreLineas=4,
+    AltoDeLinea=4, 
+    EspacioEntreLineas=3,
     output_pdf_path='documento_generado_columnas.pdf',
     output_jpg_path='documento_generado_columnas.jpg'
 ):
@@ -38,6 +38,10 @@ def generar_documentos_columnas(
         y_start = margenVertical * mm
         
         c.rect(x_start, y_start, ancho_columna, alto_util)
+        # Línea superior del primer renglón (mismo tono oscuro que la inferior)
+        c.setStrokeColor(HexColor('#dddddd'))
+        c.line(x_start, y_start + alto_util, x_start + ancho_columna, y_start + alto_util)
+        c.setStrokeColor(HexColor(colorDeGrosorDeBorde))
         
         if col < columnas - 1:
             x_linea_divisoria = x_start + ancho_columna + (margenEntreColumnas * mm / 2)
@@ -48,11 +52,37 @@ def generar_documentos_columnas(
             y_actual -= (AltoDeLinea * mm)
             if y_actual <= y_start:
                 break
+            # Línea inferior del renglón de AltoDeLinea (un poco más oscura)
+            c.setStrokeColor(HexColor('#dddddd'))
             c.line(x_start, y_actual, x_start + ancho_columna, y_actual)
+            c.setStrokeColor(HexColor(colorDeGrosorDeBorde))
+            # Renglón de 4 mm dividido en 3 secciones de 1.333... mm
+            seccion_linea = AltoDeLinea / 3
+            c.line(
+                x_start, y_actual + (AltoDeLinea - seccion_linea) * mm,
+                x_start + ancho_columna, y_actual + (AltoDeLinea - seccion_linea) * mm
+            )
+            c.line(
+                x_start, y_actual + seccion_linea * mm,
+                x_start + ancho_columna, y_actual + seccion_linea * mm
+            )
             y_actual -= (EspacioEntreLineas * mm)
             if y_actual <= y_start:
                 break
+            # Línea superior del siguiente renglón (cierre del espacio de 3 mm, un poco más oscura)
+            c.setStrokeColor(HexColor('#dddddd'))
             c.line(x_start, y_actual, x_start + ancho_columna, y_actual)
+            c.setStrokeColor(HexColor(colorDeGrosorDeBorde))
+            # Espacio de 3 mm dividido en 3 partes de 1 mm
+            seccion_espacio = EspacioEntreLineas / 3
+            c.line(
+                x_start, y_actual + (EspacioEntreLineas - seccion_espacio) * mm,
+                x_start + ancho_columna, y_actual + (EspacioEntreLineas - seccion_espacio) * mm
+            )
+            c.line(
+                x_start, y_actual + seccion_espacio * mm,
+                x_start + ancho_columna, y_actual + seccion_espacio * mm
+            )
 
     c.save()
 
@@ -92,6 +122,13 @@ def generar_documentos_columnas(
             outline=color, 
             width=line_width
         )
+        # Línea superior del primer renglón (mismo tono oscuro que la inferior)
+        color_oscuro = ImageColor.getrgb('#dddddd')
+        draw.line(
+            [(x_start_px, y_start_px), (x_start_px + ancho_columna_px, y_start_px)],
+            fill=color_oscuro,
+            width=line_width
+        )
         
         # Línea divisoria vertical
         if col < columnas - 1:
@@ -108,18 +145,48 @@ def generar_documentos_columnas(
             y_actual_px += (AltoDeLinea * ppm)
             if y_actual_px >= y_start_px + alto_util_px:
                 break
+            # Línea inferior del renglón de AltoDeLinea (un poco más oscura)
             draw.line(
                 [(x_start_px, y_actual_px), (x_start_px + ancho_columna_px, y_actual_px)], 
-                fill=color, 
+                fill=color_oscuro, 
+                width=line_width
+            )
+            # Renglón de 4 mm dividido en 3 secciones de 1.333... mm
+            seccion_linea = AltoDeLinea / 3
+            y_interna_sup = y_actual_px - (AltoDeLinea - seccion_linea) * ppm
+            y_interna_inf = y_actual_px - seccion_linea * ppm
+            draw.line(
+                [(x_start_px, y_interna_sup), (x_start_px + ancho_columna_px, y_interna_sup)],
+                fill=color,
+                width=line_width
+            )
+            draw.line(
+                [(x_start_px, y_interna_inf), (x_start_px + ancho_columna_px, y_interna_inf)],
+                fill=color,
                 width=line_width
             )
             
             y_actual_px += (EspacioEntreLineas * ppm)
             if y_actual_px >= y_start_px + alto_util_px:
                 break
+            # Línea superior del siguiente renglón (cierre del espacio de 3 mm, un poco más oscura)
             draw.line(
                 [(x_start_px, y_actual_px), (x_start_px + ancho_columna_px, y_actual_px)], 
-                fill=color, 
+                fill=color_oscuro, 
+                width=line_width
+            )
+            # Espacio de 3 mm dividido en 3 partes de 1 mm
+            seccion_espacio = EspacioEntreLineas / 3
+            y_esp_sup = y_actual_px - (EspacioEntreLineas - seccion_espacio) * ppm
+            y_esp_inf = y_actual_px - seccion_espacio * ppm
+            draw.line(
+                [(x_start_px, y_esp_sup), (x_start_px + ancho_columna_px, y_esp_sup)],
+                fill=color,
+                width=line_width
+            )
+            draw.line(
+                [(x_start_px, y_esp_inf), (x_start_px + ancho_columna_px, y_esp_inf)],
+                fill=color,
                 width=line_width
             )
 
@@ -128,4 +195,7 @@ def generar_documentos_columnas(
 
 # Ejemplo de uso
 if __name__ == "__main__":
-    generar_documentos_columnas()
+    generar_documentos_columnas(
+        output_pdf_path='documento_generado_columnas_v2.pdf',
+        output_jpg_path='documento_generado_columnas_v2.jpg'
+    )
