@@ -56,15 +56,15 @@ def generar_documentos_columnas(
             c.setStrokeColor(HexColor('#dddddd'))
             c.line(x_start, y_actual, x_start + ancho_columna, y_actual)
             c.setStrokeColor(HexColor(colorDeGrosorDeBorde))
-            # Renglón de 4 mm dividido en 3 secciones de 1.333... mm
-            seccion_linea = AltoDeLinea / 3
+            # Renglón de 4 mm: bandas 1.1 | 1.8 | 1.1 mm (no tercios iguales)
+            seccion_extrema = 1.1
             c.line(
-                x_start, y_actual + (AltoDeLinea - seccion_linea) * mm,
-                x_start + ancho_columna, y_actual + (AltoDeLinea - seccion_linea) * mm
+                x_start, y_actual + (AltoDeLinea - seccion_extrema) * mm,
+                x_start + ancho_columna, y_actual + (AltoDeLinea - seccion_extrema) * mm
             )
             c.line(
-                x_start, y_actual + seccion_linea * mm,
-                x_start + ancho_columna, y_actual + seccion_linea * mm
+                x_start, y_actual + seccion_extrema * mm,
+                x_start + ancho_columna, y_actual + seccion_extrema * mm
             )
             y_actual -= (EspacioEntreLineas * mm)
             if y_actual <= y_start:
@@ -151,10 +151,10 @@ def generar_documentos_columnas(
                 fill=color_oscuro, 
                 width=line_width
             )
-            # Renglón de 4 mm dividido en 3 secciones de 1.333... mm
-            seccion_linea = AltoDeLinea / 3
-            y_interna_sup = y_actual_px - (AltoDeLinea - seccion_linea) * ppm
-            y_interna_inf = y_actual_px - seccion_linea * ppm
+            # Renglón de 4 mm: bandas 1.1 | 1.8 | 1.1 mm (no tercios iguales)
+            seccion_extrema = 1.1
+            y_interna_sup = y_actual_px - (AltoDeLinea - seccion_extrema) * ppm
+            y_interna_inf = y_actual_px - seccion_extrema * ppm
             draw.line(
                 [(x_start_px, y_interna_sup), (x_start_px + ancho_columna_px, y_interna_sup)],
                 fill=color,
