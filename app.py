@@ -73,15 +73,15 @@ def generar_documentos_columnas(
             c.setStrokeColor(HexColor('#dddddd'))
             c.line(x_start, y_actual, x_start + ancho_columna, y_actual)
             c.setStrokeColor(HexColor(colorDeGrosorDeBorde))
-            # Espacio de 3 mm dividido en 3 partes de 1 mm
-            seccion_espacio = EspacioEntreLineas / 3
+            # Espacio de 3 mm: bandas 0.9 | 1.2 | 0.9 mm (no tercios iguales)
+            seccion_extrema_esp = 0.9
             c.line(
-                x_start, y_actual + (EspacioEntreLineas - seccion_espacio) * mm,
-                x_start + ancho_columna, y_actual + (EspacioEntreLineas - seccion_espacio) * mm
+                x_start, y_actual + (EspacioEntreLineas - seccion_extrema_esp) * mm,
+                x_start + ancho_columna, y_actual + (EspacioEntreLineas - seccion_extrema_esp) * mm
             )
             c.line(
-                x_start, y_actual + seccion_espacio * mm,
-                x_start + ancho_columna, y_actual + seccion_espacio * mm
+                x_start, y_actual + seccion_extrema_esp * mm,
+                x_start + ancho_columna, y_actual + seccion_extrema_esp * mm
             )
 
     c.save()
@@ -175,10 +175,10 @@ def generar_documentos_columnas(
                 fill=color_oscuro, 
                 width=line_width
             )
-            # Espacio de 3 mm dividido en 3 partes de 1 mm
-            seccion_espacio = EspacioEntreLineas / 3
-            y_esp_sup = y_actual_px - (EspacioEntreLineas - seccion_espacio) * ppm
-            y_esp_inf = y_actual_px - seccion_espacio * ppm
+            # Espacio de 3 mm: bandas 0.9 | 1.2 | 0.9 mm (no tercios iguales)
+            seccion_extrema_esp = 0.9
+            y_esp_sup = y_actual_px - (EspacioEntreLineas - seccion_extrema_esp) * ppm
+            y_esp_inf = y_actual_px - seccion_extrema_esp * ppm
             draw.line(
                 [(x_start_px, y_esp_sup), (x_start_px + ancho_columna_px, y_esp_sup)],
                 fill=color,
